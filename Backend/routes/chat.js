@@ -39,13 +39,13 @@ router.get("/thread/:threadId", async(req, res) => {
         const thread = await Thread.findOne({threadId});
 
         if(!thread) {
-            res.status(404).json({error: "Thread not found"});
+            return res.status(404).json({error: "Thread not found"});
         }
 
-        res.json(thread.messages);
+        return res.json(thread.messages);
     } catch(err) {
         console.log(err);
-        res.status(500).json({error: "Failed to fetch chat"});
+        return res.status(500).json({error: "Failed to fetch chat"});
     }
 });
 
@@ -56,14 +56,14 @@ router.delete("/thread/:threadId", async (req, res) => {
         const deletedThread = await Thread.findOneAndDelete({threadId});
 
         if(!deletedThread) {
-            res.status(404).json({error: "Thread not found"});
+            return res.status(404).json({error: "Thread not found"});
         }
 
-        res.status(200).json({success : "Thread deleted successfully"});
+        return res.status(200).json({success : "Thread deleted successfully"});
 
     } catch(err) {
         console.log(err);
-        res.status(500).json({error: "Failed to delete thread"});
+        return res.status(500).json({error: "Failed to delete thread"});
     }
 });
 
@@ -71,7 +71,7 @@ router.post("/chat", async(req, res) => {
     const {threadId, message} = req.body;
 
     if(!threadId || !message) {
-        res.status(400).json({error: "missing required fields"});
+        return res.status(400).json({error: "missing required fields"});
     }
 
     try {
@@ -88,18 +88,19 @@ router.post("/chat", async(req, res) => {
             thread.messages.push({role: "user", content: message});
         }
 
-        const assistantReply = await getOpenAIAPIResponse(message);
+        const assistantReply = (await getOpenAIAPIResponse(message)) || "Sorry, I could not process your request.";
 
         thread.messages.push({role: "assistant", content: assistantReply});
         thread.updatedAt = new Date();
 
         await thread.save();
-        res.json({reply: assistantReply});
+        return res.json({reply: assistantReply});
     } catch(err) {
         console.log(err);
-        res.status(500).json({error: "something went wrong"});
+        return res.status(500).json({error: "something went wrong"});
     }
 });
+
 
 
 

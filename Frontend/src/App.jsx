@@ -9,9 +9,18 @@ function App() {
   const [prompt, setPrompt] = useState("");
   const [reply, setReply] = useState(null);
   const [currThreadId, setCurrThreadId] = useState(uuidv1());
-  const [prevChats, setPrevChats] = useState([]); //stores all chats of curr threads
+  const [prevChats, setPrevChats] = useState([]); // stores all chats of curr threads
   const [newChat, setNewChat] = useState(true);
   const [allThreads, setAllThreads] = useState([]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  const createNewChat = () => {
+    setNewChat(true);
+    setPrompt("");
+    setReply(null);
+    setCurrThreadId(uuidv1());
+    setPrevChats([]);
+  };
 
   const providerValues = {
     prompt, setPrompt,
@@ -19,17 +28,20 @@ function App() {
     currThreadId, setCurrThreadId,
     newChat, setNewChat,
     prevChats, setPrevChats,
-    allThreads, setAllThreads
+    allThreads, setAllThreads,
+    isSidebarOpen, setIsSidebarOpen,
+    createNewChat
   }; 
 
   return (
-    <div className='app'>
+    <div className={`app ${isSidebarOpen ? 'sidebar-expanded' : 'sidebar-collapsed'}`}>
       <MyContext.Provider value={providerValues}>
-          <Sidebar></Sidebar>
-          <ChatWindow></ChatWindow>
-        </MyContext.Provider>
+        <Sidebar />
+        <ChatWindow />
+      </MyContext.Provider>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
+

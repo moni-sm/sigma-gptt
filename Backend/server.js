@@ -12,19 +12,27 @@ app.use(cors());
 
 app.use("/api", chatRoutes);
 
-app.listen(PORT, () => {
-    console.log(`server running on ${PORT}`);
-    connectDB();
+const connectDB = async () => {
+    try {
+        if (!process.env.MONGODB_URI) {
+            console.error("❌ MONGODB_URI is not set in Backend/.env");
+            return;
+        }
+        await mongoose.connect(process.env.MONGODB_URI);
+        console.log("✅ Connected with Database successfully!");
+    } catch(err) {
+        console.error("❌ Failed to connect with Database:", err.message);
+        if (err.message.includes("whitelist") || err.message.includes("Could not connect to any servers")) {
+            console.error("👉 Tip: Whitelist your IP in MongoDB Atlas (Network Access -> Add IP -> Allow Access From Anywhere: 0.0.0.0/0)");
+        }
+    }
+};
+
+app.listen(PORT, async () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    await connectDB();
 });
 
-const connectDB = async() => {
-    try {
-        await mongoose.connect(process.env.MONGODB_URI);
-        console.log("Connected with Database!");
-    } catch(err) {
-        console.log("Failed to connect with Db", err);
-    }
-}
 
 
 // app.post("/test", async (req, res) => {
