@@ -10,6 +10,40 @@
 
 ---
 
+## 🌐 Live Demo & DNS Architecture
+
+> 🔗 **Live URL:** [https://moni-sigmagpt.duckdns.org](https://moni-sigmagpt.duckdns.org)
+
+### How the Deployment & DNS Works:
+
+```mermaid
+graph LR
+    User["🌐 User / Browser"] -->|"1. Requests moni-sigmagpt.duckdns.org"| DNS["DuckDNS Server<br>(Resolves to EC2 Public IP)"]
+    DNS -->|"2. Directs to EC2"| EC2["AWS EC2 Instance<br>(Ports 80 & 443)"]
+    
+    subgraph EC2_Server["Inside AWS EC2"]
+        Nginx["Nginx Web Server<br>• SSL Termination (Let's Encrypt)<br>• Port 80 -> 443 Redirect"]
+        Frontend["Frontend SPA<br>(Vite Production Build)"]
+        Backend["Backend API (PM2)<br>(Express on :8080)"]
+        
+        Nginx -->|"Static files (/)"| Frontend
+        Nginx -->|"Proxy (/api/*)"| Backend
+    end
+
+    Backend -->|"Database queries"| Atlas[("MongoDB Atlas")]
+    Backend -->|"AI Inference"| LLMs["Groq Cloud / Gemini / OpenAI"]
+```
+
+1. **Dynamic DNS (DuckDNS)**:
+   - Maps the custom domain `moni-sigmagpt.duckdns.org` directly to the AWS EC2 instance's Elastic/Public IP address.
+2. **Nginx Reverse Proxy & SSL (Certbot / Let's Encrypt)**:
+   - Listens on ports `80` (HTTP) and `443` (HTTPS with TLS encryption).
+   - Port 80 automatically issues a `301 Redirect` to secure `https://`.
+   - Directly serves the optimized React static build files for the web interface.
+   - Forwards all `/api/*` REST endpoints internally to `http://127.0.0.1:8080`.
+3. **PM2 Process Manager**:
+   - Manages the Node.js backend daemon in the background with auto-restart on system reboots or unhandled errors.
+
 ## 💎 The Vibe Check (Features)
 
 - ⚡ **Multi-Brain AI Switching**: Swap models mid-convo without losing your flow:
