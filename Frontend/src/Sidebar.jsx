@@ -14,18 +14,25 @@ function Sidebar() {
         setReply, 
         isSidebarOpen, 
         setIsSidebarOpen, 
-        createNewChat 
+        createNewChat,
+        user,
+        token,
+        logout,
+        openAuthModal
     } = useContext(MyContext);
 
     const [threadToDelete, setThreadToDelete] = useState(null);
 
     const getAllThreads = async () => {
         try {
-            const response = await fetch("http://localhost:8080/api/thread");
+            const headers = token ? { "Authorization": `Bearer ${token}` } : {};
+            const response = await fetch("http://localhost:8080/api/thread", { headers });
             const res = await response.json();
             if (Array.isArray(res)) {
                 const filteredData = res.map(thread => ({ threadId: thread.threadId, title: thread.title }));
                 setAllThreads(filteredData);
+            } else {
+                setAllThreads([]);
             }
         } catch (err) {
             console.log(err);
@@ -34,13 +41,14 @@ function Sidebar() {
 
     useEffect(() => {
         getAllThreads();
-    }, [currThreadId]);
+    }, [currThreadId, token]);
 
     const changeThread = async (newThreadId) => {
         setCurrThreadId(newThreadId);
 
         try {
-            const response = await fetch(`http://localhost:8080/api/thread/${newThreadId}`);
+            const headers = token ? { "Authorization": `Bearer ${token}` } : {};
+            const response = await fetch(`http://localhost:8080/api/thread/${newThreadId}`, { headers });
             const res = await response.json();
             setPrevChats(Array.isArray(res) ? res : []);
             setNewChat(false);
@@ -52,7 +60,11 @@ function Sidebar() {
 
     const deleteThread = async (threadId) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/thread/${threadId}`, { method: "DELETE" });
+            const headers = token ? { "Authorization": `Bearer ${token}` } : {};
+            const response = await fetch(`http://localhost:8080/api/thread/${threadId}`, { 
+                method: "DELETE",
+                headers 
+            });
             await response.json();
 
             setAllThreads(prev => prev.filter(thread => thread.threadId !== threadId));
@@ -63,6 +75,11 @@ function Sidebar() {
         } catch (err) {
             console.log(err);
         }
+    };
+
+    const getInitials = (name) => {
+        if (!name) return "U";
+        return name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
     };
 
     return (
@@ -123,6 +140,33 @@ function Sidebar() {
                 </div>
 
                 <div className="sidebar-footer">
+                    {user ? (
+                        <div className="user-profile-bar">
+                            <div className="user-avatar-badge" title={user.email}>
+                                <span>{getInitials(user.name)}</span>
+                            </div>
+                            <div className="user-info">
+                                <span className="user-name">{user.name}</span>
+                                <span className="user-email">{user.email}</span>
+                            </div>
+                            <button 
+                                className="logout-btn" 
+                                onClick={logout}
+                                title="Sign out"
+                            >
+                                <i className="fa-solid fa-arrow-right-from-bracket"></i>
+                            </button>
+                        </div>
+                    ) : (
+                        <button 
+                            className="sidebar-auth-btn" 
+                            onClick={() => openAuthModal("login")}
+                        >
+                            <i className="fa-solid fa-arrow-right-to-bracket"></i>
+                            <span>Sign In / Register</span>
+                        </button>
+                    )}
+
                     <div className="sign-badge">
                         <span>© 2026 SigmaGPT • by Moni</span>
                     </div>
@@ -168,5 +212,6 @@ function Sidebar() {
 }
 
 export default Sidebar;
+
 
 

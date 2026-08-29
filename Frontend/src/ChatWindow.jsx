@@ -15,7 +15,11 @@ function ChatWindow() {
         setNewChat, 
         isSidebarOpen, 
         setIsSidebarOpen, 
-        createNewChat 
+        createNewChat,
+        user,
+        token,
+        logout,
+        openAuthModal
     } = useContext(MyContext);
     const [loading, setLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
@@ -28,11 +32,16 @@ function ChatWindow() {
         setLoading(true);
         setNewChat(false);
 
+        const headers = {
+            "Content-Type": "application/json"
+        };
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+        }
+
         const options = {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers,
             body: JSON.stringify({
                 message: currentMessage,
                 threadId: currThreadId
@@ -79,7 +88,16 @@ function ChatWindow() {
     }, [isOpen]);
 
     const handleProfileClick = () => {
-        setIsOpen(!isOpen);
+        if (!user) {
+            openAuthModal("login");
+        } else {
+            setIsOpen(!isOpen);
+        }
+    };
+
+    const getInitials = (name) => {
+        if (!name) return "U";
+        return name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
     };
 
     return (
@@ -115,31 +133,36 @@ function ChatWindow() {
 
 
                 <div className="navbar-right" ref={dropdownRef}>
-                    <div className="userIconDiv" onClick={handleProfileClick} title="User Account">
-                        <span className="userIcon"><i className="fa-solid fa-user"></i></span>
-                    </div>
+                    {user ? (
+                        <div className="userIconDiv logged-in" onClick={handleProfileClick} title={user.email}>
+                            <span className="user-initials">{getInitials(user.name)}</span>
+                        </div>
+                    ) : (
+                        <button className="nav-login-btn" onClick={() => openAuthModal("login")}>
+                            <i className="fa-solid fa-arrow-right-to-bracket"></i>
+                            <span>Sign In</span>
+                        </button>
+                    )}
 
-                    {isOpen && (
+                    {user && isOpen && (
                         <div className="dropDown">
                             <div className="dropDownHeader">
-                                <span className="user-email">user@sigmagpt.ai</span>
-                                <span className="user-plan">Free Plan</span>
+                                <span className="user-dropdown-name">{user.name}</span>
+                                <span className="user-email">{user.email}</span>
                             </div>
                             <div className="dropDownDivider"></div>
                             <div className="dropDownItem" onClick={() => setIsOpen(false)}>
                                 <i className="fa-solid fa-gear"></i> Settings
                             </div>
-                            <div className="dropDownItem" onClick={() => setIsOpen(false)}>
-                                <i className="fa-solid fa-cloud-arrow-up"></i> Upgrade plan
-                            </div>
                             <div className="dropDownDivider"></div>
-                            <div className="dropDownItem logout" onClick={() => setIsOpen(false)}>
+                            <div className="dropDownItem logout" onClick={() => { setIsOpen(false); logout(); }}>
                                 <i className="fa-solid fa-arrow-right-from-bracket"></i> Log out
                             </div>
                         </div>
                     )}
                 </div>
             </header>
+
 
             <Chat />
 

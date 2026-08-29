@@ -1,9 +1,10 @@
 import './App.css';
 import Sidebar from "./Sidebar.jsx";
 import ChatWindow from "./ChatWindow.jsx";
-import {MyContext} from "./MyContext.jsx";
-import { useState } from 'react';
-import {v1 as uuidv1} from "uuid";
+import AuthModal from "./AuthModal.jsx";
+import { MyContext } from "./MyContext.jsx";
+import { useState, useEffect } from 'react';
+import { v1 as uuidv1 } from "uuid";
 
 function App() {
   const [prompt, setPrompt] = useState("");
@@ -13,6 +14,50 @@ function App() {
   const [newChat, setNewChat] = useState(true);
   const [allThreads, setAllThreads] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  // Authentication State
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState("login"); // "login" | "register"
+
+  // Load token & user from localStorage on initial startup
+  useEffect(() => {
+    const savedToken = localStorage.getItem("sigmagpt_token");
+    const savedUser = localStorage.getItem("sigmagpt_user");
+
+    if (savedToken && savedUser) {
+      try {
+        setToken(savedToken);
+        setUser(JSON.parse(savedUser));
+      } catch (e) {
+        localStorage.removeItem("sigmagpt_token");
+        localStorage.removeItem("sigmagpt_user");
+      }
+    }
+  }, []);
+
+  const login = (newToken, userData) => {
+    setToken(newToken);
+    setUser(userData);
+    localStorage.setItem("sigmagpt_token", newToken);
+    localStorage.setItem("sigmagpt_user", JSON.stringify(userData));
+    setIsAuthModalOpen(false);
+  };
+
+  const logout = () => {
+    setToken(null);
+    setUser(null);
+    localStorage.removeItem("sigmagpt_token");
+    localStorage.removeItem("sigmagpt_user");
+    setAllThreads([]);
+    createNewChat();
+  };
+
+  const openAuthModal = (mode = "login") => {
+    setAuthMode(mode);
+    setIsAuthModalOpen(true);
+  };
 
   const createNewChat = () => {
     setNewChat(true);
@@ -30,7 +75,12 @@ function App() {
     prevChats, setPrevChats,
     allThreads, setAllThreads,
     isSidebarOpen, setIsSidebarOpen,
-    createNewChat
+    createNewChat,
+    user, setUser,
+    token, setToken,
+    isAuthModalOpen, setIsAuthModalOpen,
+    authMode, setAuthMode,
+    login, logout, openAuthModal
   }; 
 
   return (
@@ -38,10 +88,12 @@ function App() {
       <MyContext.Provider value={providerValues}>
         <Sidebar />
         <ChatWindow />
+        <AuthModal />
       </MyContext.Provider>
     </div>
   );
 }
 
 export default App;
+
 
