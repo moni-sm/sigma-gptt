@@ -175,10 +175,11 @@ function ChatWindow() {
                     </button>
                 </div>
                 <p className="info">
-                    SigmaGPT can make mistakes. Verify important information.
+                    SigmaGPT can make mistakes. Verify important information. • © 2026 SigmaGPT. All rights reserved.
                 </p>
             </div>
         </main>
+
     );
 }
 

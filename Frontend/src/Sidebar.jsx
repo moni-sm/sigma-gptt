@@ -124,9 +124,10 @@ function Sidebar() {
 
                 <div className="sidebar-footer">
                     <div className="sign-badge">
-                        <span>SigmaGPT Assistant</span>
+                        <span>© 2026 SigmaGPT • by Moni</span>
                     </div>
                 </div>
+
             </aside>
 
             {/* Delete Confirmation Modal */}

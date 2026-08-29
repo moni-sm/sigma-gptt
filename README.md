@@ -146,6 +146,8 @@ This repository includes a GitHub Actions workflow (`.github/workflows/ci.yml`) 
 
 ---
 
-## 📜 License
+## 📜 License & Copyright
 
-Distributed under the MIT License.
+Copyright © 2026 [moni-sm](https://github.com/moni-sm). All rights reserved.
+
+Distributed under the [MIT License](LICENSE).
