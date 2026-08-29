@@ -110,6 +110,57 @@ router.post("/login", async (req, res) => {
     }
 });
 
+// Social Login (Google & GitHub)
+router.post("/social-login", async (req, res) => {
+    try {
+        const { provider, email, name, avatar } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ error: "Email is required for social login." });
+        }
+
+        const normalizedEmail = email.toLowerCase().trim();
+        let user = await User.findOne({ email: normalizedEmail });
+
+        if (!user) {
+            // Generate random secure password for social user
+            const randomPassword = Math.random().toString(36).slice(-12) + "A1!";
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(randomPassword, salt);
+
+            user = new User({
+                name: name ? name.trim() : (normalizedEmail.split("@")[0] || "User"),
+                email: normalizedEmail,
+                password: hashedPassword,
+                avatar: avatar || ""
+            });
+
+            await user.save();
+        }
+
+        // Generate JWT token
+        const token = jwt.sign(
+            { userId: user._id, email: user.email, name: user.name },
+            JWT_SECRET,
+            { expiresIn: "7d" }
+        );
+
+        return res.status(200).json({
+            message: `${provider || "Social"} login successful`,
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                avatar: user.avatar
+            }
+        });
+    } catch (err) {
+        console.error("Social login error:", err);
+        return res.status(500).json({ error: "Failed to authenticate with social provider." });
+    }
+});
+
 // Get currently authenticated user profile
 router.get("/me", requireAuth, async (req, res) => {
     try {
@@ -134,3 +185,4 @@ router.get("/me", requireAuth, async (req, res) => {
 });
 
 export default router;
+
