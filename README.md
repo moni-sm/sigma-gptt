@@ -7,16 +7,19 @@ A modern, fast, and feature-rich AI chat application inspired by ChatGPT, built 
 ## ✨ Features
 
 - 💬 **Interactive AI Chat**: Real-time message streaming with support for coding, reasoning, and brainstorming.
+- 🔒 **User Authentication & Authorization**: Secure JWT-based authentication with bcrypt password hashing and user thread isolation.
+- 🌐 **Google & GitHub Social Login**: Single sign-on with Google and GitHub in addition to email/password registration.
+- ☀️🌙 **Light & Dark Theme Mode**: Seamless theme switching with custom CSS design tokens and `localStorage` persistence.
+- 🤖 **Interactive AI Model Selector**: Switch on-the-fly between **SigmaGPT 4o-mini**, **Llama 3.3 70B** (Meta), **Qwen 2.5 32B** (Alibaba), and **Gemini 1.5 Flash** (Google).
+- 🎙️ **Voice Input (Speech-to-Text)**: Dedicated microphone button with real-time browser speech recognition dictation.
+- 🔊 **Read Aloud (Text-to-Speech)**: Listen to AI responses with natural speech synthesis audio playback.
+- 📋 **One-Click Markdown Copy**: Instant response copying with visual checkmark feedback.
 - 📑 **Rich Markdown & Code Highlighting**: Full support for GitHub-Flavored Markdown (tables, blockquotes, syntax-highlighted code blocks with Atom One Dark theme).
-- 📜 **Smart User-Controlled Scrolling**: Auto-scroll tracks AI responses automatically, but intelligently pauses when you scroll up so you can read without being dragged down. Includes a floating "Scroll to Bottom" button (`↓`).
-- 📁 **Collapsible Sidebar & Chat History**: Save, switch, and manage previous conversations persisted in MongoDB. Collapses smoothly for an expansive workspace.
+- 📜 **Smart Auto-Scrolling**: Auto-scroll tracks AI responses automatically, and pauses when scrolling up with a floating "Scroll to Bottom" button (`↓`).
+- 📁 **Collapsible Sidebar & Chat History**: Save, switch, and manage previous conversations persisted in MongoDB.
 - 🗑️ **Safe Chat Deletion**: Built-in modal confirmation dialog to prevent accidental deletion of important chats.
-- ⚡ **Multi-Provider AI Engine**:
-  - **Groq Cloud** (Llama 3.3 70B / Llama 3.1 8B — ultra-fast & free)
-  - **Google Gemini** (Gemini 1.5 / 2.0 Flash)
-  - **OpenAI** (GPT-4o-mini)
-  - **Zero-Config Fallback Assistant**
 - 🔄 **CI/CD with GitHub Actions**: Automated syntax checking, dependency validation, and production bundle verification on every push and pull request.
+
 
 ---
 
