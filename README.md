@@ -66,19 +66,9 @@ cd sigma-gptt
    ```bash
    npm install
    ```
-3. Create a `.env` file in the `Backend` folder:
-   ```env
-   MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/sigmagpt
-   
-   # Free AI Provider (Recommended): https://console.groq.com/keys
-   GROQ_API_KEY=gsk_yourGroqKeyHere
-   
-   # Or Google Gemini: https://aistudio.google.com/apikey
-   # GEMINI_API_KEY=AIzaSy...
-   
-   # Or OpenAI:
-   # OPENAI_API_KEY=sk-...
-   ```
+3. Set up environment variables:
+   - Create a `.env` file inside the `Backend` directory based on `.env.example`.
+   - Configure your `MONGODB_URI` and AI API key (`GROQ_API_KEY`, `GEMINI_API_KEY`, or `OPENAI_API_KEY`).
 4. Start the backend server:
    ```bash
    node server.js
@@ -86,6 +76,7 @@ cd sigma-gptt
    npm run dev
    ```
    *The server runs on **http://localhost:8080**.*
+
 
 ---
 
