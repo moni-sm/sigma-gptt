@@ -1,16 +1,26 @@
 import "dotenv/config";
 
-const getOpenAIAPIResponse = async (message) => {
-    // 1. Try Groq API Key (if provided: https://console.groq.com/keys)
+const getOpenAIAPIResponse = async (message, requestedModel = "auto") => {
+    // If specific Groq model requested or default auto
     if (process.env.GROQ_API_KEY && !process.env.GROQ_API_KEY.includes("your_")) {
+        const groqModelMap = {
+            "llama-3.3-70b": "openai/gpt-oss-120b",
+            "qwen-2.5-32b": "qwen/qwen3.8-27b",
+            "auto": "openai/gpt-oss-120b"
+        };
+
+        const targetModel = groqModelMap[requestedModel] || requestedModel;
         const models = [
+            targetModel,
             "openai/gpt-oss-120b",
             "openai/gpt-oss-20b",
             "qwen/qwen3.8-27b",
-            "qwen/qwen3.6-27b",
             "groq/compound-mini"
         ];
-        for (const model of models) {
+        // Deduplicate
+        const uniqueModels = [...new Set(models)];
+
+        for (const model of uniqueModels) {
             const res = await fetchCompletion({
                 url: "https://api.groq.com/openai/v1/chat/completions",
                 apiKey: process.env.GROQ_API_KEY,
@@ -21,6 +31,7 @@ const getOpenAIAPIResponse = async (message) => {
             if (res.success) return res.content;
         }
     }
+
 
 
 

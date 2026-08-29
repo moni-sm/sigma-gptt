@@ -18,6 +18,8 @@ function Chat() {
     const { newChat, prevChats, reply, setPrompt } = useContext(MyContext);
     const [latestReply, setLatestReply] = useState(null);
     const [userScrolledUp, setUserScrolledUp] = useState(false);
+    const [speakingIdx, setSpeakingIdx] = useState(null);
+    const [copiedIdx, setCopiedIdx] = useState(null);
     
     const containerRef = useRef(null);
     const chatEndRef = useRef(null);
@@ -27,7 +29,6 @@ function Chat() {
     const handleScroll = useCallback(() => {
         if (!containerRef.current || isAutoScrolling.current) return;
         const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-        // User is scrolled up if distance to bottom > 90px
         const isUp = scrollHeight - scrollTop - clientHeight > 90;
         setUserScrolledUp(isUp);
     }, []);
@@ -79,8 +80,65 @@ function Chat() {
         return () => clearInterval(interval);
     }, [prevChats, reply]);
 
+    // Stop speaking when unmounting or switching threads
+    useEffect(() => {
+        return () => {
+            if ("speechSynthesis" in window) {
+                window.speechSynthesis.cancel();
+            }
+        };
+    }, [prevChats]);
+
     const handleSuggestionClick = (text) => {
         setPrompt(text);
+    };
+
+    // Text-to-Speech (Read Aloud)
+    const toggleSpeech = (text, idx) => {
+        if (!("speechSynthesis" in window)) {
+            alert("Text-to-speech is not supported in your browser.");
+            return;
+        }
+
+        if (speakingIdx === idx) {
+            window.speechSynthesis.cancel();
+            setSpeakingIdx(null);
+            return;
+        }
+
+        window.speechSynthesis.cancel();
+
+        // Clean markdown symbols for clearer speech
+        const cleanText = text
+            .replace(/```[\s\S]*?```/g, "Code block omitted.")
+            .replace(/`([^`]+)`/g, "$1")
+            .replace(/#+\s?/g, "")
+            .replace(/\*\*([^*]+)\*\*/g, "$1")
+            .replace(/\*([^*]+)\*/g, "$1")
+            .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+
+        utterance.onend = () => {
+            setSpeakingIdx(null);
+        };
+
+        utterance.onerror = () => {
+            setSpeakingIdx(null);
+        };
+
+        setSpeakingIdx(idx);
+        window.speechSynthesis.speak(utterance);
+    };
+
+    // Copy response text
+    const handleCopy = (text, idx) => {
+        navigator.clipboard.writeText(text).then(() => {
+            setCopiedIdx(idx);
+            setTimeout(() => setCopiedIdx(null), 2000);
+        });
     };
 
     // Custom Markdown component renderers for tables
@@ -137,15 +195,35 @@ function Chat() {
                                 {chat.role === "user" ? (
                                     <p className="user-text">{chat.content}</p>
                                 ) : (
-                                    <div className="markdown-body">
-                                        <ReactMarkdown 
-                                            remarkPlugins={[remarkGfm]} 
-                                            rehypePlugins={[rehypeHighlight]}
-                                            components={markdownComponents}
-                                        >
-                                            {chat.content}
-                                        </ReactMarkdown>
-                                    </div>
+                                    <>
+                                        <div className="markdown-body">
+                                            <ReactMarkdown 
+                                                remarkPlugins={[remarkGfm]} 
+                                                rehypePlugins={[rehypeHighlight]}
+                                                components={markdownComponents}
+                                            >
+                                                {chat.content}
+                                            </ReactMarkdown>
+                                        </div>
+                                        <div className="message-actions-bar">
+                                            <button 
+                                                className={`msg-action-btn ${speakingIdx === idx ? "active" : ""}`}
+                                                onClick={() => toggleSpeech(chat.content, idx)}
+                                                title={speakingIdx === idx ? "Stop reading" : "Read aloud"}
+                                            >
+                                                <i className={`fa-solid ${speakingIdx === idx ? "fa-stop" : "fa-volume-high"}`}></i>
+                                                <span>{speakingIdx === idx ? "Stop" : "Read Aloud"}</span>
+                                            </button>
+                                            <button 
+                                                className={`msg-action-btn ${copiedIdx === idx ? "copied" : ""}`}
+                                                onClick={() => handleCopy(chat.content, idx)}
+                                                title="Copy to clipboard"
+                                            >
+                                                <i className={`fa-solid ${copiedIdx === idx ? "fa-check" : "fa-copy"}`}></i>
+                                                <span>{copiedIdx === idx ? "Copied" : "Copy"}</span>
+                                            </button>
+                                        </div>
+                                    </>
                                 )}
                             </div>
                         </div>
@@ -166,6 +244,26 @@ function Chat() {
                                         {latestReply !== null ? latestReply : prevChats[prevChats.length - 1].content}
                                     </ReactMarkdown>
                                 </div>
+                                {latestReply === null && (
+                                    <div className="message-actions-bar">
+                                        <button 
+                                            className={`msg-action-btn ${speakingIdx === prevChats.length - 1 ? "active" : ""}`}
+                                            onClick={() => toggleSpeech(prevChats[prevChats.length - 1].content, prevChats.length - 1)}
+                                            title={speakingIdx === prevChats.length - 1 ? "Stop reading" : "Read aloud"}
+                                        >
+                                            <i className={`fa-solid ${speakingIdx === prevChats.length - 1 ? "fa-stop" : "fa-volume-high"}`}></i>
+                                            <span>{speakingIdx === prevChats.length - 1 ? "Stop" : "Read Aloud"}</span>
+                                        </button>
+                                        <button 
+                                            className={`msg-action-btn ${copiedIdx === prevChats.length - 1 ? "copied" : ""}`}
+                                            onClick={() => handleCopy(prevChats[prevChats.length - 1].content, prevChats.length - 1)}
+                                            title="Copy to clipboard"
+                                        >
+                                            <i className={`fa-solid ${copiedIdx === prevChats.length - 1 ? "fa-check" : "fa-copy"}`}></i>
+                                            <span>{copiedIdx === prevChats.length - 1 ? "Copied" : "Copy"}</span>
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}
@@ -178,7 +276,7 @@ function Chat() {
                 <button 
                     className="scroll-bottom-btn" 
                     onClick={() => scrollToBottom("smooth")}
-                    title="Scroll to bottom"
+                    title="Jump to bottom"
                 >
                     <i className="fa-solid fa-arrow-down"></i>
                 </button>
@@ -188,5 +286,6 @@ function Chat() {
 }
 
 export default Chat;
+
 
 

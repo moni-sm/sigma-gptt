@@ -58,22 +58,27 @@
     border-color: rgba(255, 255, 255, 0.15);
 }
 
+.model-selector-container {
+    position: relative;
+}
+
 .model-selector {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     padding: 0.4rem 0.75rem;
     border-radius: var(--radius-full);
-    background-color: rgba(255, 255, 255, 0.04);
+    background-color: var(--bg-card);
     border: 1px solid var(--border-subtle);
     cursor: pointer;
     transition: all 0.2s ease;
+    user-select: none;
 }
 
-
-.model-selector:hover {
-    background-color: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.15);
+.model-selector:hover,
+.model-selector.active {
+    background-color: var(--bg-card-hover);
+    border-color: var(--border-focus);
 }
 
 .model-status-dot {
@@ -86,22 +91,135 @@
 
 .model-name {
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     color: var(--text-primary);
 }
 
 .model-version {
-    font-size: 0.75rem;
+    font-size: 0.725rem;
     color: var(--text-muted);
     background-color: rgba(255, 255, 255, 0.06);
     padding: 2px 6px;
     border-radius: 4px;
+    font-weight: 500;
 }
 
 .model-chevron {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: var(--text-muted);
+    transition: transform 0.2s ease;
 }
+
+.model-chevron.rotate {
+    transform: rotate(180deg);
+}
+
+/* Model Dropdown Menu */
+.model-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 280px;
+    background-color: var(--bg-modal);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    padding: 0.5rem;
+    z-index: 150;
+    animation: dropdownPop 0.15s ease-out;
+}
+
+.model-dropdown-header {
+    padding: 0.4rem 0.6rem 0.5rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 0.35rem;
+}
+
+.model-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.model-option-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: 1px solid transparent;
+}
+
+.model-option-card:hover {
+    background-color: var(--bg-card-hover);
+}
+
+.model-option-card.selected {
+    background-color: rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.3);
+}
+
+.model-option-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--primary) 0%, #06b6d4 100%);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.model-option-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.model-option-name-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.option-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.option-badge {
+    font-size: 0.7rem;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background-color: rgba(99, 102, 241, 0.2);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.option-desc {
+    font-size: 0.725rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.selected-check {
+    color: var(--primary);
+    font-size: 0.85rem;
+}
+
 
 .navbar-right {
     position: relative;
@@ -318,6 +436,50 @@ input:focus {
     outline: none;
 }
 
+/* Microphone Voice Button */
+.mic-btn {
+    position: relative;
+    height: 36px;
+    width: 36px;
+    min-width: 36px;
+    border-radius: 50%;
+    border: none;
+    background-color: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    margin-right: 4px;
+    transition: all 0.2s ease;
+}
+
+.mic-btn:hover {
+    color: var(--primary);
+    background-color: var(--bg-card-hover);
+}
+
+.mic-btn.listening {
+    background-color: var(--danger);
+    color: #ffffff;
+    box-shadow: 0 0 14px rgba(239, 68, 68, 0.6);
+}
+
+.mic-pulse-ring {
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid var(--danger);
+    animation: micPulse 1.2s infinite cubic-bezier(0.25, 0, 0.45, 1);
+    pointer-events: none;
+}
+
+@keyframes micPulse {
+    0% { transform: scale(0.9); opacity: 1; }
+    100% { transform: scale(1.6); opacity: 0; }
+}
+
 #submit {
     height: 36px;
     width: 36px;
@@ -345,6 +507,7 @@ input:focus {
     transform: scale(1.05);
     box-shadow: 0 4px 14px rgba(99, 102, 241, 0.5);
 }
+
 
 .info {
     font-size: 0.75rem;

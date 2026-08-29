@@ -69,7 +69,7 @@ router.delete("/thread/:threadId", async (req, res) => {
 
 // Post a chat message and generate response
 router.post("/chat", async (req, res) => {
-    const { threadId, message } = req.body;
+    const { threadId, message, model } = req.body;
 
     if (!threadId || !message) {
         return res.status(400).json({ error: "missing required fields" });
@@ -98,7 +98,8 @@ router.post("/chat", async (req, res) => {
             thread.messages.push({ role: "user", content: message });
         }
 
-        const assistantReply = (await getOpenAIAPIResponse(message)) || "Sorry, I could not process your request.";
+        const assistantReply = (await getOpenAIAPIResponse(message, model)) || "Sorry, I could not process your request.";
+
 
         thread.messages.push({ role: "assistant", content: assistantReply });
         thread.updatedAt = new Date();
