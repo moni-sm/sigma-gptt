@@ -4,5 +4,7 @@
 # Node.js dependencies
 node_modules/
 
-# Environment variables
+# Environment variables & Private Keys
 .env
+*.pem
+*.key
