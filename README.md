@@ -1,4 +1,4 @@
-# ⚡ SigmaGPT — The AI Assistant That Actually Hits Different 🗿🔥
+# ⚡ SigmaGPT — The AI Assistant 
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-HTTPS_Cooking-success?style=for-the-badge&logo=googlechrome&logoColor=white)](https://moni-sigmagpt.duckdns.org)
 [![CI/CD Pipeline](https://img.shields.io/github/actions/workflow/status/moni-sm/sigma-gptt/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/moni-sm/sigma-gptt/actions)
