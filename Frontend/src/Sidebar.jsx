@@ -2,6 +2,7 @@ import "./Sidebar.css";
 import { useContext, useEffect, useState } from "react";
 import { MyContext } from "./MyContext.jsx";
 import blackLogo from "./assets/blacklogo.png";
+import { getApiUrl } from "./api.js";
 
 function Sidebar() {
     const { 
@@ -26,7 +27,7 @@ function Sidebar() {
     const getAllThreads = async () => {
         try {
             const headers = token ? { "Authorization": `Bearer ${token}` } : {};
-            const response = await fetch("/api/thread", { headers });
+            const response = await fetch(getApiUrl("/api/thread"), { headers });
             const res = await response.json();
             if (Array.isArray(res)) {
                 const filteredData = res.map(thread => ({ threadId: thread.threadId, title: thread.title }));
@@ -48,7 +49,7 @@ function Sidebar() {
 
         try {
             const headers = token ? { "Authorization": `Bearer ${token}` } : {};
-            const response = await fetch(`/api/thread/${newThreadId}`, { headers });
+            const response = await fetch(getApiUrl(`/api/thread/${newThreadId}`), { headers });
             const res = await response.json();
             setPrevChats(Array.isArray(res) ? res : []);
             setNewChat(false);
@@ -61,10 +62,11 @@ function Sidebar() {
     const deleteThread = async (threadId) => {
         try {
             const headers = token ? { "Authorization": `Bearer ${token}` } : {};
-            const response = await fetch(`/api/thread/${threadId}`, { 
+            const response = await fetch(getApiUrl(`/api/thread/${threadId}`), { 
                 method: "DELETE",
                 headers 
             });
+
 
             await response.json();
 

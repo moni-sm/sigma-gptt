@@ -3,6 +3,7 @@ import Chat from "./Chat.jsx";
 import { MyContext } from "./MyContext.jsx";
 import { useContext, useState, useEffect, useRef } from "react";
 import { PulseLoader } from "react-spinners";
+import { getApiUrl } from "./api.js";
 
 const AVAILABLE_MODELS = [
     { id: "auto", name: "SigmaGPT", badge: "4o-mini", desc: "Default balanced intelligence", icon: "fa-wand-magic-sparkles" },
@@ -66,8 +67,9 @@ function ChatWindow() {
         };
 
         try {
-            const response = await fetch("/api/chat", options);
+            const response = await fetch(getApiUrl("/api/chat"), options);
             const res = await response.json();
+
 
             setReply(res.reply || "No response received.");
         } catch (err) {

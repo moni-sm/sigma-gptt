@@ -3,6 +3,7 @@ import "./AuthModal.css";
 import { MyContext } from "./MyContext.jsx";
 import blackLogo from "./assets/blacklogo.png";
 import { PulseLoader } from "react-spinners";
+import { getApiUrl } from "./api.js";
 
 function AuthModal() {
     const { 
@@ -35,7 +36,8 @@ function AuthModal() {
         const sampleName = provider === "google" ? "Google User" : "GitHub Developer";
 
         try {
-            const response = await fetch("/api/auth/social-login", {
+            const url = getApiUrl("/api/auth/social-login");
+            const response = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -69,8 +71,8 @@ function AuthModal() {
         setLoading(true);
 
         const endpoint = authMode === "login" 
-            ? "/api/auth/login" 
-            : "/api/auth/register";
+            ? getApiUrl("/api/auth/login") 
+            : getApiUrl("/api/auth/register");
 
         const payload = authMode === "login" 
             ? { email, password } 
@@ -82,6 +84,7 @@ function AuthModal() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
+
 
 
             const data = await response.json();
