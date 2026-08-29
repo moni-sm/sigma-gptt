@@ -11,14 +11,17 @@ router.use(optionalAuth);
 // Get all threads for the current user
 router.get("/thread", async (req, res) => {
     try {
-        const query = req.user ? { userId: req.user.userId } : { userId: null };
+        const query = req.user 
+            ? { userId: req.user.userId } 
+            : { $or: [{ userId: null }, { userId: { $exists: false } }] };
         const threads = await Thread.find(query).sort({ updatedAt: -1 });
-        return res.json(threads);
+        return res.json(threads || []);
     } catch (err) {
         console.error("Error fetching threads:", err);
-        return res.status(500).json({ error: "Failed to fetch threads" });
+        return res.status(500).json({ error: "Failed to fetch threads", details: err.message });
     }
 });
+
 
 // Get a specific thread by threadId (with ownership check)
 router.get("/thread/:threadId", async (req, res) => {
