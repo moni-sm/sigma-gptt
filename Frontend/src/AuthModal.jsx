@@ -35,7 +35,7 @@ function AuthModal() {
         const sampleName = provider === "google" ? "Google User" : "GitHub Developer";
 
         try {
-            const response = await fetch("http://localhost:8080/api/auth/social-login", {
+            const response = await fetch("/api/auth/social-login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -69,8 +69,8 @@ function AuthModal() {
         setLoading(true);
 
         const endpoint = authMode === "login" 
-            ? "http://localhost:8080/api/auth/login" 
-            : "http://localhost:8080/api/auth/register";
+            ? "/api/auth/login" 
+            : "/api/auth/register";
 
         const payload = authMode === "login" 
             ? { email, password } 
@@ -82,6 +82,7 @@ function AuthModal() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
+
 
             const data = await response.json();
 

@@ -26,7 +26,7 @@ function Sidebar() {
     const getAllThreads = async () => {
         try {
             const headers = token ? { "Authorization": `Bearer ${token}` } : {};
-            const response = await fetch("http://localhost:8080/api/thread", { headers });
+            const response = await fetch("/api/thread", { headers });
             const res = await response.json();
             if (Array.isArray(res)) {
                 const filteredData = res.map(thread => ({ threadId: thread.threadId, title: thread.title }));
@@ -48,7 +48,7 @@ function Sidebar() {
 
         try {
             const headers = token ? { "Authorization": `Bearer ${token}` } : {};
-            const response = await fetch(`http://localhost:8080/api/thread/${newThreadId}`, { headers });
+            const response = await fetch(`/api/thread/${newThreadId}`, { headers });
             const res = await response.json();
             setPrevChats(Array.isArray(res) ? res : []);
             setNewChat(false);
@@ -61,10 +61,11 @@ function Sidebar() {
     const deleteThread = async (threadId) => {
         try {
             const headers = token ? { "Authorization": `Bearer ${token}` } : {};
-            const response = await fetch(`http://localhost:8080/api/thread/${threadId}`, { 
+            const response = await fetch(`/api/thread/${threadId}`, { 
                 method: "DELETE",
                 headers 
             });
+
             await response.json();
 
             setAllThreads(prev => prev.filter(thread => thread.threadId !== threadId));
