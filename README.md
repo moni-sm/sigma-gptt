@@ -1,225 +1,200 @@
-# ⚡ SigmaGPT — Fullstack AI Chat Assistant
+# ⚡ SigmaGPT — The AI Assistant That Actually Hits Different 🗿🔥
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-HTTPS_Active-success?style=for-the-badge&logo=googlechrome&logoColor=white)](https://moni-sigmagpt.duckdns.org)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-HTTPS_Cooking-success?style=for-the-badge&logo=googlechrome&logoColor=white)](https://moni-sigmagpt.duckdns.org)
 [![CI/CD Pipeline](https://img.shields.io/github/actions/workflow/status/moni-sm/sigma-gptt/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/moni-sm/sigma-gptt/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![Built with MERN](https://img.shields.io/badge/Stack-MERN_%2B_Vite-6366f1?style=for-the-badge&logo=react&logoColor=white)](https://react.dev)
 
-A modern, fast, and feature-rich AI chat application inspired by ChatGPT, built with the **MERN Stack (MongoDB, Express, React, Node.js)**, **Vite**, and **Multi-Provider AI Engines (Groq, Google Gemini, OpenAI)**.
-
----
-
-## ✨ Features
-
-- 💬 **Interactive AI Chat**: Real-time message streaming with support for coding, reasoning, and brainstorming.
-- 🔒 **User Authentication & Authorization**: Secure JWT-based authentication with `bcryptjs` password hashing and user thread isolation.
-- 🌐 **Google & GitHub Social Single Sign-On**: One-click social login via Google and GitHub in addition to standard email registration.
-- ☀️🌙 **Light & Dark Theme Mode**: Seamless theme switching with custom CSS design tokens and `localStorage` persistence.
-- 🤖 **Interactive AI Model Selector**: Switch on-the-fly between:
-  - **SigmaGPT 4o-mini** (Default balanced intelligence)
-  - **Llama 3.3 70B** (Meta — High-speed reasoning via Groq)
-  - **Qwen 2.5 32B** (Alibaba — Advanced coding & mathematics)
-  - **Gemini 1.5 Flash** (Google — Ultra-fast concise responses)
-- 🎙️ **Voice Input (Speech-to-Text)**: Dedicated microphone button with real-time browser speech recognition dictation.
-- 🔊 **Read Aloud (Text-to-Speech)**: Listen to AI responses with natural browser speech synthesis audio playback.
-- 📋 **One-Click Markdown Copy**: Instant response copying with visual checkmark feedback.
-- 📑 **Rich Markdown & Code Highlighting**: Full support for GitHub-Flavored Markdown (tables, blockquotes, syntax-highlighted code blocks with Atom One Dark theme).
-- 📜 **Smart Auto-Scrolling**: Auto-scroll tracks AI responses automatically, and pauses when scrolling up with a floating "Scroll to Bottom" button (`↓`).
-- 📁 **Collapsible Sidebar & Chat History**: Save, switch, and manage previous conversations persisted in MongoDB.
-- 🗑️ **Safe Chat Deletion**: Built-in modal confirmation dialog to prevent accidental deletion of important chats.
-- 🔄 **CI/CD with GitHub Actions**: Automated syntax checking, dependency validation, and production bundle verification on every push and pull request.
+> **No cap, ChatGPT just got an upgrade.** 🚀  
+> **SigmaGPT** is a fullstack, hyper-responsive AI platform built for devs, creators, and thinkers who need instant answers, immaculate UI vibes, and zero latency. Powered by **Groq Cloud (Llama 3.3 70B)**, **Google Gemini 1.5 Flash**, and **OpenAI**.
 
 ---
 
-## 🛠️ Tech Stack
+## 💎 The Vibe Check (Features)
 
-### Frontend
-- **Framework**: React 19 + Vite
-- **Styling**: Modern Vanilla CSS (Design Tokens, Glassmorphism, Responsive Grid/Flexbox)
-- **Markdown & Code**: `react-markdown`, `remark-gfm` (GFM Tables), `rehype-highlight` (Highlight.js)
-- **Icons & UI**: FontAwesome 6, `react-spinners`
-- **Speech**: Web Speech API (`SpeechRecognition` & `SpeechSynthesis`)
-
-### Backend
-- **Runtime**: Node.js (ES Modules)
-- **Framework**: Express.js
-- **Database**: MongoDB Atlas & Mongoose
-- **Security**: JSON Web Tokens (`jsonwebtoken`), `bcryptjs`, `cors`, `dotenv`
-- **AI Integrations**: Groq Cloud (Llama 3.3 70B), Google AI Studio (Gemini 1.5 Flash), OpenAI API
-
----
-
-## 🚀 Quick Start Guide
-
-### 1. Prerequisites
-- [Node.js](https://nodejs.org/) (v18 or higher)
-- [MongoDB](https://www.mongodb.com/) (Local instance or [MongoDB Atlas](https://cloud.mongodb.com/))
-- *(Optional)* Free [Groq API Key](https://console.groq.com/keys) or [Google Gemini Key](https://aistudio.google.com/apikey)
+- ⚡ **Multi-Brain AI Switching**: Swap models mid-convo without losing your flow:
+  - 🧠 **SigmaGPT 4o-mini** — Balanced, witty, and smart.
+  - 🏎️ **Llama 3.3 70B (Meta via Groq)** — Insane speed, deep reasoning, zero waiting.
+  - 💻 **Qwen 2.5 32B (Alibaba)** — God-tier for coding, math, and syntax debugging.
+  - ⚡ **Gemini 1.5 Flash (Google)** — Ultra-fast, sharp, concise responses.
+- 🎙️ **Voice Mode (Hands-Free)**:
+  - 🎤 **Speak Your Mind**: Live Speech-to-Text with glowing mic animation.
+  - 🔊 **Read Aloud**: Natural speech playback for any AI response.
+  - 📋 **One-Tap Copy**: Snag code blocks and markdown answers instantly.
+- 🔒 **Flex Your Auth (Guest Mode or SSO)**:
+  - 👤 **Guest Mode**: Hop in and start cooking instantly — no login required.
+  - 🌐 **1-Click Google & GitHub SSO**: Sync your chats across your phone, laptop, and PC.
+  - 🛡️ **JWT Security & Password Hashing**: Your chat history is encrypted and isolated to you.
+- ☀️🌙 **Aesthetic Dark & Light Themes**: Curated glassmorphism design system that stays easy on your eyes at 3 AM.
+- 📊 **Flawless Markdown & Tables**: GFM tables that won't break on mobile screens, plus syntax-highlighted code blocks with Atom One Dark.
+- 📜 **Smart Scroll Tech**: Pauses auto-scroll when you scroll up so you can read without getting yanked down, plus a floating jump-to-bottom button (`↓`).
+- 🗑️ **Safe Thread Management**: Clean collapsible sidebar with delete confirmation dialogs so you never nuke an important chat by accident.
+- 🔄 **Automated CI/CD Pipeline**: GitHub Actions testing builds and syntax integrity on every single commit.
 
 ---
 
-### 2. Clone the Repository
+## 🛠️ The Tech Stack (Zero Bloat)
 
+```text
+┌─────────────────────────────────────────────────────────────┐
+│                       THE FRONTEND                          │
+│     React 19  •  Vite  •  Vanilla CSS (Design Tokens)       │
+│  React-Markdown  •  Remark-GFM  •  Rehype-Highlight (Atom)  │
+│        Web Speech API (Speech Recognition + TTS)            │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ JSON via REST / HTTPS
+┌──────────────────────────────▼──────────────────────────────┐
+│                        THE BACKEND                          │
+│       Node.js (ESM)  •  Express.js  •  JWT + Bcryptjs       │
+│          Mongoose  •  MongoDB Atlas Database                │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                 ┌─────────────┴─────────────┐
+                 ▼                           ▼
+          ⚡ Groq Cloud API           ✨ Google Gemini / OpenAI
+     (Llama 3.3 70B & Qwen 2.5)          (1.5 Flash & 4o-mini)
+```
+
+---
+
+## 🚀 Run It Locally (Quickstart in 2 Minutes)
+
+### 1. Clone the Repo
 ```bash
 git clone https://github.com/moni-sm/sigma-gptt.git
 cd sigma-gptt
 ```
 
----
-
-### 3. Backend Setup
-
-1. Navigate to the `Backend` directory:
-   ```bash
-   cd Backend
-   npm install
-   ```
-2. Set up environment variables:
-   - Create a `.env` file inside `Backend/` based on `.env.example`:
-   ```env
-   PORT=8080
-   MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/sigmagpt?retryWrites=true&w=majority
-   JWT_SECRET=your_super_secret_jwt_key
-   GROQ_API_KEY=gsk_your_free_groq_api_key
-   # GEMINI_API_KEY=your_gemini_api_key
-   ```
-3. Start the backend server:
-   ```bash
-   node server.js
-   ```
-   *Server runs on **http://localhost:8080**.*
-
----
-
-### 4. Frontend Setup
-
-1. Open a new terminal and navigate to the `Frontend` directory:
-   ```bash
-   cd Frontend
-   npm install
-   ```
-2. Start the Vite development server:
-   ```bash
-   npm run dev
-   ```
-3. Open your browser at **http://localhost:5173**.
-
----
-
-## ☁️ AWS EC2 & HTTPS Production Deployment
-
-### 1. EC2 Instance Setup (Amazon Linux 2023 / Ubuntu)
+### 2. Fire Up the Backend
 ```bash
-# Update packages and install Node.js 20, Git, and Nginx
-sudo dnf update -y
-sudo dnf install -y nodejs git nginx
-sudo npm install -g pm2
+cd Backend
+npm install
 ```
 
-### 2. Run Backend with PM2
+Create your `Backend/.env` file:
+```env
+PORT=8080
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/sigmagpt?retryWrites=true&w=majority
+JWT_SECRET=your_super_secret_jwt_key
+GROQ_API_KEY=gsk_your_free_groq_api_key
+# GEMINI_API_KEY=your_gemini_api_key
+```
+
+Start the server:
 ```bash
-cd /home/ec2-user/sigma-gptt/Backend
+node server.js
+```
+*Backend runs on `http://localhost:8080` (MongoDB connected ✅).*
+
+### 3. Launch the Frontend
+Open a new terminal tab:
+```bash
+cd Frontend
+npm install
+npm run dev
+```
+*Boom! Head over to **http://localhost:5173** and start chatting.*
+
+---
+
+## ☁️ Deploying to AWS EC2 (Production Setup)
+
+Deploying with **Amazon Linux 2023 / Ubuntu**, **Nginx Reverse Proxy**, and **Let's Encrypt SSL**:
+
+```bash
+# 1. SSH into your EC2 instance & install dependencies
+sudo dnf update -y
+sudo dnf install -y nodejs git nginx certbot python3-certbot-nginx
+sudo npm install -g pm2
+
+# 2. Clone and start Backend with PM2
+cd /home/ec2-user
+git clone https://github.com/moni-sm/sigma-gptt.git
+cd sigma-gptt/Backend
 npm install
 pm2 start server.js --name "sigmagpt-backend"
 pm2 save
 pm2 startup
-```
 
-### 3. Build Frontend & Configure Nginx
-```bash
-# Build frontend
-cd /home/ec2-user/sigma-gptt/Frontend
+# 3. Build the Frontend bundle
+cd ../Frontend
 npm install
 npm run build
 
-# Apply Nginx configuration
+# 4. Apply Nginx config & reload
 sudo cp /home/ec2-user/sigma-gptt/nginx.conf /etc/nginx/nginx.conf
 sudo nginx -t
 sudo systemctl restart nginx
-```
 
-### 4. Setup SSL with Let's Encrypt (Certbot)
-```bash
-sudo dnf install -y certbot python3-certbot-nginx
+# 5. Free SSL Certificate with DuckDNS & Certbot
 sudo certbot --nginx -d moni-sigmagpt.duckdns.org
 ```
 
 ---
 
-## 📡 API Reference
+## 📡 API Cheat Sheet
 
-| Method | Endpoint | Description | Auth Required |
+| HTTP | Route | What it does | Auth Required? |
 |---|---|---|---|
-| `POST` | `/api/auth/register` | Register new user with email & password | No |
-| `POST` | `/api/auth/login` | Login user and receive 7-day JWT token | No |
-| `POST` | `/api/auth/social-login` | Google & GitHub SSO authentication | No |
-| `GET` | `/api/auth/me` | Retrieve authenticated user profile | Yes (`Bearer <token>`) |
-| `POST` | `/api/chat` | Send message and receive AI completion | Optional |
-| `GET` | `/api/thread` | Retrieve conversation history for active user | Optional |
-| `GET` | `/api/thread/:threadId` | Retrieve all messages of a specific thread | Optional |
-| `DELETE` | `/api/thread/:threadId` | Delete a specific conversation thread | Optional |
-| `GET` | `/api/health` | Backend and database health status check | No |
+| `POST` | `/api/auth/register` | Create a new user with email & password | ❌ No |
+| `POST` | `/api/auth/login` | Login and receive a 7-day JWT token | ❌ No |
+| `POST` | `/api/auth/social-login` | 1-Click Google & GitHub SSO | ❌ No |
+| `GET` | `/api/auth/me` | Fetch active user profile | 🔒 Yes (`Bearer <token>`) |
+| `POST` | `/api/chat` | Send prompt & stream AI completion | ⚡ Optional (Guest supported) |
+| `GET` | `/api/thread` | Fetch user conversation history | ⚡ Optional |
+| `GET` | `/api/thread/:id` | Fetch specific thread messages | ⚡ Optional |
+| `DELETE` | `/api/thread/:id` | Delete conversation thread | ⚡ Optional |
+| `GET` | `/api/health` | Backend & Database health check | ❌ No |
 
 ---
 
-## 📁 Project Structure
+## 📂 Clean Project Structure
 
 ```text
 sigma-gptt/
-├── .github/
-│   └── workflows/
-│       └── ci.yml              # GitHub Actions CI/CD pipeline
+├── .github/workflows/ci.yml    # Automated CI/CD build tests
 ├── Backend/
-│   ├── middleware/
-│   │   └── auth.js             # requireAuth & optionalAuth JWT middleware
+│   ├── middleware/auth.js      # JWT verification & optional auth
 │   ├── models/
-│   │   ├── Thread.js           # Mongoose Thread & Message schemas
-│   │   └── User.js             # Mongoose User account schema
+│   │   ├── Thread.js           # Conversation schemas
+│   │   └── User.js             # User credentials & profiles
 │   ├── routes/
-│   │   ├── auth.js             # Authentication endpoints (Register, Login, Social)
-│   │   └── chat.js             # Chat API & Thread endpoints
-│   ├── utils/
-│   │   └── openai.js           # Multi-provider LLM connector (Groq, Gemini, OpenAI)
-│   ├── .env.example            # Environment variables template
-│   ├── package.json
-│   └── server.js               # Express entrypoint
+│   │   ├── auth.js             # Auth & Social login endpoints
+│   │   └── chat.js             # Chat generation & thread routes
+│   ├── utils/openai.js         # Multi-LLM provider router
+│   ├── server.js               # Express entrypoint
+│   └── package.json
 ├── Frontend/
-│   ├── public/
 │   ├── src/
-│   │   ├── assets/             # Brand logos & graphics
-│   │   ├── api.js              # Dynamic API URL resolver
-│   │   ├── App.jsx             # Root layout & global state provider
-│   │   ├── App.css
-│   │   ├── AuthModal.jsx       # Sign In / Sign Up & Social Login modal
-│   │   ├── AuthModal.css
-│   │   ├── Chat.jsx            # Chat feed, speech output, markdown renderer
-│   │   ├── Chat.css
-│   │   ├── ChatWindow.jsx      # Top navbar, model selector, mic input dock
-│   │   ├── ChatWindow.css
-│   │   ├── Sidebar.jsx         # Collapsible history sidebar, user badge, modal
-│   │   ├── Sidebar.css
-│   │   ├── MyContext.jsx       # Global state context
-│   │   └── index.css           # Global theme tokens & design system
-│   ├── index.html
-│   ├── package.json
-│   └── vite.config.js          # Vite configuration & dev proxy
-├── nginx.conf                  # Production reverse proxy configuration
-├── .gitignore
-├── LICENSE
-└── README.md
+│   │   ├── api.js              # Universal API endpoint resolver
+│   │   ├── App.jsx             # State provider & root layout
+│   │   ├── AuthModal.jsx       # SSO & email login modal
+│   │   ├── Chat.jsx            # Feed, speech player & markdown
+│   │   ├── ChatWindow.jsx      # Model switcher & mic dock
+│   │   ├── Sidebar.jsx         # Chat history & user profile
+│   │   └── index.css           # Design tokens (Dark & Light)
+│   ├── vite.config.js          # Vite config & proxy
+│   └── package.json
+├── nginx.conf                  # Production reverse proxy config
+├── LICENSE                     # MIT License
+└── README.md                   # You are here ✨
 ```
 
 ---
 
-## 🔄 CI/CD Pipeline
+## 🤝 Contributing
 
-This repository includes a GitHub Actions workflow (`.github/workflows/ci.yml`) that automatically runs on every push or pull request to `main`:
-- **Backend CI**: Validates syntax and module integrity.
-- **Frontend CI**: Validates dependencies and tests the production Vite build (`npm run build`).
+Got an idea or want to add a feature? PRs are welcome!
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/CoolFeature`)
+3. Commit your Changes (`git commit -m 'feat: add some cool feature'`)
+4. Push to the Branch (`git push origin feature/CoolFeature`)
+5. Open a Pull Request
 
 ---
 
-## 📜 License & Copyright
+## 📜 License
 
 Copyright © 2026 [moni-sm](https://github.com/moni-sm). All rights reserved.
 
-Distributed under the [MIT License](LICENSE).
+Distributed under the [MIT License](LICENSE). Drop a ⭐ if you vibe with this project!
