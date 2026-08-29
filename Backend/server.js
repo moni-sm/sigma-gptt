@@ -14,6 +14,16 @@ app.use(cors());
 app.use("/api/auth", authRoutes);
 app.use("/api", chatRoutes);
 
+// Health check endpoint
+app.get("/api/health", (req, res) => {
+    const dbState = mongoose.connection.readyState;
+    const states = ["Disconnected", "Connected", "Connecting", "Disconnecting"];
+    return res.json({
+        status: "ok",
+        database: states[dbState] || "Unknown",
+        uptime: process.uptime()
+    });
+});
 
 const connectDB = async () => {
     try {
@@ -21,7 +31,9 @@ const connectDB = async () => {
             console.error("❌ MONGODB_URI is not set in Backend/.env");
             return;
         }
-        await mongoose.connect(process.env.MONGODB_URI);
+        await mongoose.connect(process.env.MONGODB_URI, {
+            serverSelectionTimeoutMS: 7000
+        });
         console.log("✅ Connected with Database successfully!");
     } catch(err) {
         console.error("❌ Failed to connect with Database:", err.message);
@@ -35,6 +47,7 @@ app.listen(PORT, async () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
     await connectDB();
 });
+
 
 
 
