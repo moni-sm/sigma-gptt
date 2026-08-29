@@ -105,6 +105,32 @@
 
 .navbar-right {
     position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.theme-toggle-btn {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    height: 34px;
+    width: 34px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.theme-toggle-btn:hover {
+    background-color: var(--bg-card-hover);
+    color: var(--primary);
+    border-color: var(--primary);
+    transform: rotate(15deg) scale(1.05);
 }
 
 .userIconDiv {
@@ -174,7 +200,7 @@
     top: calc(100% + 10px);
     right: 0;
     width: 220px;
-    background-color: #1a1e26;
+    background-color: var(--bg-modal);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-lg);
@@ -193,7 +219,7 @@
 .user-dropdown-name {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #ffffff;
+    color: var(--text-primary);
 }
 
 .dropDownHeader .user-email {
@@ -203,6 +229,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
 
 
 .dropDownDivider {

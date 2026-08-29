@@ -19,11 +19,14 @@ function ChatWindow() {
         user,
         token,
         logout,
-        openAuthModal
+        openAuthModal,
+        theme,
+        toggleTheme
     } = useContext(MyContext);
     const [loading, setLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
+
 
     const getReply = async () => {
         if (!prompt || !prompt.trim() || loading) return;
@@ -133,6 +136,14 @@ function ChatWindow() {
 
 
                 <div className="navbar-right" ref={dropdownRef}>
+                    <button 
+                        className="theme-toggle-btn" 
+                        onClick={toggleTheme} 
+                        title={theme === "dark" ? "Switch to Light theme" : "Switch to Dark theme"}
+                    >
+                        <i className={`fa-solid ${theme === "dark" ? "fa-sun" : "fa-moon"}`}></i>
+                    </button>
+
                     {user ? (
                         <div className="userIconDiv logged-in" onClick={handleProfileClick} title={user.email}>
                             <span className="user-initials">{getInitials(user.name)}</span>
@@ -143,6 +154,7 @@ function ChatWindow() {
                             <span>Sign In</span>
                         </button>
                     )}
+
 
                     {user && isOpen && (
                         <div className="dropDown">

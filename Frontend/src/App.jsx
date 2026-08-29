@@ -21,6 +21,21 @@ function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState("login"); // "login" | "register"
 
+  // Theme State ("dark" | "light")
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem("sigmagpt_theme") || "dark";
+  });
+
+  // Sync theme with document attribute and localStorage
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("sigmagpt_theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === "dark" ? "light" : "dark"));
+  };
+
   // Load token & user from localStorage on initial startup
   useEffect(() => {
     const savedToken = localStorage.getItem("sigmagpt_token");
@@ -80,8 +95,10 @@ function App() {
     token, setToken,
     isAuthModalOpen, setIsAuthModalOpen,
     authMode, setAuthMode,
-    login, logout, openAuthModal
+    login, logout, openAuthModal,
+    theme, setTheme, toggleTheme
   }; 
+
 
   return (
     <div className={`app ${isSidebarOpen ? 'sidebar-expanded' : 'sidebar-collapsed'}`}>
