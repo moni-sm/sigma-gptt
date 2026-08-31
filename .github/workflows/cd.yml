@@ -23,42 +23,54 @@ jobs:
           fi
           echo "✅ SSH Key secret detected."
 
-      - name: SSH and Deploy to EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST || 'moni-sigmagpt.duckdns.org' }}
-          username: ${{ secrets.EC2_USER || 'ec2-user' }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: ${{ secrets.EC2_PORT || 22 }}
-          script_stop: true
-          script: |
+      - name: Deploy to AWS EC2 via SSH
+        env:
+          SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          HOST: ${{ secrets.EC2_HOST || 'moni-sigmagpt.duckdns.org' }}
+          USER: ${{ secrets.EC2_USER || 'ec2-user' }}
+          PORT: ${{ secrets.EC2_PORT || '22' }}
+        run: |
+          # Configure SSH client
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          
+          # Write and normalize SSH key (strips Windows CRLF if present and ensures trailing newline)
+          printf "%s\n" "$SSH_KEY" | tr -d '\r' > ~/.ssh/ec2_key
+          chmod 600 ~/.ssh/ec2_key
+          
+          # Scan host key to prevent MITM prompt
+          ssh-keyscan -p "$PORT" -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+
+          # Connect and execute deployment
+          ssh -i ~/.ssh/ec2_key -o StrictHostKeyChecking=accept-new -p "$PORT" "$USER@$HOST" << 'EOF'
+            set -e
             echo "🚀 Starting Automated Deployment on EC2..."
-            
+
             # Navigate to project directory
-            APP_DIR="/home/${{ secrets.EC2_USER }}/sigma-gptt"
+            APP_DIR="/home/$(whoami)/sigma-gptt"
             if [ ! -d "$APP_DIR" ]; then
               APP_DIR="/home/ec2-user/sigma-gptt"
             fi
             cd "$APP_DIR"
-            
+
             # Pull latest changes from main branch
             echo "📥 Fetching and syncing latest code from origin/main..."
             git fetch origin main
             git reset --hard origin/main
-            
+
             # Deploy Backend
             echo "⚙️ Setting up Backend dependencies & restarting PM2..."
             cd Backend
             npm ci --omit=dev || npm install --omit=dev
             pm2 reload sigmagpt-backend || pm2 start server.js --name "sigmagpt-backend"
             pm2 save
-            
+
             # Deploy Frontend
             echo "🎨 Installing Frontend dependencies & building production bundle..."
             cd ../Frontend
             npm ci
             npm run build
-            
+
             # Update Nginx config if present
             echo "🌐 Validating and reloading Nginx..."
             cd ..
@@ -66,10 +78,12 @@ jobs:
               sudo cp nginx.conf /etc/nginx/nginx.conf
               sudo nginx -t && sudo systemctl reload nginx
             fi
-            
+
             # Verification
             echo "🩺 Running local health check..."
             sleep 2
             curl -s -f http://127.0.0.1:8080/api/health || true
-            
+
             echo "🎉 Deployment successfully completed!"
+          EOF
+
