@@ -30,14 +30,35 @@ jobs:
           USER: ${{ secrets.EC2_USER || 'ec2-user' }}
           PORT: ${{ secrets.EC2_PORT || '22' }}
         run: |
-          # Configure SSH client
+          # Configure SSH directory
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           
-          # Write and normalize SSH key (strips Windows CRLF if present and ensures trailing newline)
-          printf "%s\n" "$SSH_KEY" | tr -d '\r' > ~/.ssh/ec2_key
+          # Clean and normalize key
+          RAW_KEY=$(printf '%s\n' "$SSH_KEY" | tr -d '\r' | sed 's/\\n/\n/g')
+          
+          if echo "$RAW_KEY" | grep -q "OPENSSH PRIVATE KEY"; then
+            HEADER="-----BEGIN OPENSSH PRIVATE KEY-----"
+            FOOTER="-----END OPENSSH PRIVATE KEY-----"
+            BODY=$(echo "$RAW_KEY" | sed 's/-----BEGIN OPENSSH PRIVATE KEY-----//g' | sed 's/-----END OPENSSH PRIVATE KEY-----//g' | tr -s ' ' '\n' | grep -v '^[[:space:]]*$')
+            printf "%s\n%s\n%s\n" "$HEADER" "$BODY" "$FOOTER" > ~/.ssh/ec2_key
+          elif echo "$RAW_KEY" | grep -q "RSA PRIVATE KEY"; then
+            HEADER="-----BEGIN RSA PRIVATE KEY-----"
+            FOOTER="-----END RSA PRIVATE KEY-----"
+            BODY=$(echo "$RAW_KEY" | sed 's/-----BEGIN RSA PRIVATE KEY-----//g' | sed 's/-----END RSA PRIVATE KEY-----//g' | tr -s ' ' '\n' | grep -v '^[[:space:]]*$')
+            printf "%s\n%s\n%s\n" "$HEADER" "$BODY" "$FOOTER" > ~/.ssh/ec2_key
+          else
+            printf "%s\n" "$RAW_KEY" > ~/.ssh/ec2_key
+          fi
+
           chmod 600 ~/.ssh/ec2_key
           
+          echo "🔑 Verifying SSH key structure..."
+          ssh-keygen -l -f ~/.ssh/ec2_key || {
+            echo "❌ Invalid SSH key format detected. Please verify EC2_SSH_KEY secret."
+            exit 1
+          }
+
           # Scan host key to prevent MITM prompt
           ssh-keyscan -p "$PORT" -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
 
