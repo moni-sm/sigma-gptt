@@ -34,20 +34,25 @@ jobs:
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           
-          # Write SSH key directly and ensure standard LF newlines
-          printf "%s\n" "$SSH_KEY" | tr -d '\r' > ~/.ssh/ec2_key
-          chmod 600 ~/.ssh/ec2_key
-          
-          # If key contains literal \n characters, decode them
-          if ! ssh-keygen -y -f ~/.ssh/ec2_key > /dev/null 2>&1; then
-            printf "%b\n" "$SSH_KEY" | tr -d '\r' > ~/.ssh/ec2_key
+          # Attempt 1: Auto-detect if input is a base64 encoded string
+          if echo "$SSH_KEY" | tr -d ' \n\r' | base64 -d > ~/.ssh/ec2_key 2>/dev/null && ssh-keygen -y -f ~/.ssh/ec2_key >/dev/null 2>&1; then
             chmod 600 ~/.ssh/ec2_key
+            echo "✅ Loaded base64-encoded SSH key successfully."
+          else
+            # Attempt 2: Write raw multiline text
+            printf "%s\n" "$SSH_KEY" | tr -d '\r' > ~/.ssh/ec2_key
+            chmod 600 ~/.ssh/ec2_key
+            
+            # Attempt 3: Handle literal \n string escapes
+            if ! ssh-keygen -y -f ~/.ssh/ec2_key > /dev/null 2>&1; then
+              printf "%b\n" "$SSH_KEY" | tr -d '\r' > ~/.ssh/ec2_key
+              chmod 600 ~/.ssh/ec2_key
+            fi
           fi
 
           echo "🔑 Verifying SSH key structure..."
           if ! ssh-keygen -y -f ~/.ssh/ec2_key > /dev/null 2>&1; then
             echo "❌ Error: OpenSSH could not parse the EC2_SSH_KEY private key."
-            echo "👉 Please ensure you copied the FULL text of sigma-gpt.pem including BEGIN and END lines."
             exit 1
           fi
           echo "✅ SSH Key verified successfully."
