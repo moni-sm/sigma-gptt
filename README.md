@@ -1,7 +1,8 @@
 # ⚡ SigmaGPT — The AI Assistant 
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-HTTPS_Cooking-success?style=for-the-badge&logo=googlechrome&logoColor=white)](https://moni-sigmagpt.duckdns.org)
-[![CI/CD Pipeline](https://img.shields.io/github/actions/workflow/status/moni-sm/sigma-gptt/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/moni-sm/sigma-gptt/actions)
+[![CI Pipeline](https://img.shields.io/github/actions/workflow/status/moni-sm/sigma-gptt/ci.yml?branch=main&label=CI&style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/moni-sm/sigma-gptt/actions/workflows/ci.yml)
+[![CD Pipeline](https://img.shields.io/github/actions/workflow/status/moni-sm/sigma-gptt/cd.yml?branch=main&label=CD&style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/moni-sm/sigma-gptt/actions/workflows/cd.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![Built with MERN](https://img.shields.io/badge/Stack-MERN_%2B_Vite-6366f1?style=for-the-badge&logo=react&logoColor=white)](https://react.dev)
 
@@ -163,6 +164,34 @@ sudo systemctl restart nginx
 # 5. Free SSL Certificate with DuckDNS & Certbot
 sudo certbot --nginx -d moni-sigmagpt.duckdns.org
 ```
+
+---
+
+## 🔄 Automated CI/CD Pipeline (Continuous Deployment)
+
+SigmaGPT uses GitHub Actions for continuous integration and automated deployment directly to AWS EC2 upon pushing or merging into `main`.
+
+```mermaid
+graph LR
+    Push["🚀 Push to main"] --> CI["🧪 Run CI Tests<br>(Backend Syntax + Frontend Build)"]
+    CI -->|Pass| CD["⚡ Automated CD<br>(SSH to AWS EC2)"]
+    CD --> Pull["📥 Git Pull & Reset"]
+    Pull --> Backend["⚙️ npm ci & pm2 reload"]
+    Backend --> Frontend["🎨 npm run build (Vite)"]
+    Frontend --> Nginx["🌐 Reload Nginx"]
+    Nginx --> Health["🩺 Health Check Passed ✅"]
+```
+
+### GitHub Secrets Required for CD
+
+To enable automatic deployment, add these repository secrets under **Settings > Secrets and variables > Actions**:
+
+| Secret Name | Description | Example / Value |
+|---|---|---|
+| `EC2_HOST` | DuckDNS domain or Public IP of EC2 | `moni-sigmagpt.duckdns.org` |
+| `EC2_USER` | EC2 SSH Username | `ec2-user` |
+| `EC2_SSH_KEY` | Private SSH Key (`.pem` file content) | `-----BEGIN RSA PRIVATE KEY----- ...` |
+| `EC2_PORT` *(Optional)* | Custom SSH Port | `22` (default) |
 
 ---
 

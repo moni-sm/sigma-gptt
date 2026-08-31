@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Continuous Integration (CI)
 
 on:
   push:
@@ -61,3 +61,4 @@ jobs:
           name: frontend-dist
           path: Frontend/dist
           retention-days: 7
+
