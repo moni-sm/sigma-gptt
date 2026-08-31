@@ -75,11 +75,16 @@ router.post("/chat", async (req, res) => {
     const { threadId, message, model } = req.body;
 
     if (!threadId || !message) {
-        return res.status(400).json({ error: "missing required fields" });
+        return res.status(400).json({ error: "Missing required fields: threadId and message." });
     }
 
     try {
-        let thread = await Thread.findOne({ threadId });
+        let thread = null;
+        try {
+            thread = await Thread.findOne({ threadId });
+        } catch (dbErr) {
+            console.warn("Database lookup warning (proceeding in fallback mode):", dbErr.message);
+        }
 
         if (!thread) {
             // Create a new thread linked to user (if logged in)
@@ -103,15 +108,19 @@ router.post("/chat", async (req, res) => {
 
         const assistantReply = (await getOpenAIAPIResponse(message, model)) || "Sorry, I could not process your request.";
 
-
         thread.messages.push({ role: "assistant", content: assistantReply });
         thread.updatedAt = new Date();
 
-        await thread.save();
+        try {
+            await thread.save();
+        } catch (saveErr) {
+            console.warn("Database save warning:", saveErr.message);
+        }
+
         return res.json({ reply: assistantReply });
     } catch (err) {
         console.error("Chat error:", err);
-        return res.status(500).json({ error: "Something went wrong processing your message." });
+        return res.status(500).json({ error: "Something went wrong processing your message.", details: err.message });
     }
 });
 

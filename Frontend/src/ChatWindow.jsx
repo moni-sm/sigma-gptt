@@ -68,13 +68,19 @@ function ChatWindow() {
 
         try {
             const response = await fetch(getApiUrl("/api/chat"), options);
-            const res = await response.json();
+            const res = await response.json().catch(() => null);
 
+            if (!response.ok) {
+                const errorMessage = res?.error || res?.details || `Server error (${response.status}). Please check if the backend is running properly.`;
+                setReply(`⚠️ **Error:** ${errorMessage}`);
+                setLoading(false);
+                return;
+            }
 
-            setReply(res.reply || "No response received.");
+            setReply(res?.reply || "No response received.");
         } catch (err) {
             console.log(err);
-            setReply("Failed to connect to the backend server. Please verify your connection.");
+            setReply("⚠️ **Connection Error:** Failed to connect to the backend server. Please verify the backend is running on port 8080.");
         }
         setLoading(false);
     };
