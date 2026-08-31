@@ -32,7 +32,7 @@ const connectDB = async () => {
             return;
         }
         await mongoose.connect(process.env.MONGODB_URI, {
-            serverSelectionTimeoutMS: 7000
+            serverSelectionTimeoutMS: 5000
         });
         console.log("✅ Connected with Database successfully!");
     } catch(err) {
@@ -40,8 +40,15 @@ const connectDB = async () => {
         if (err.message.includes("whitelist") || err.message.includes("Could not connect to any servers")) {
             console.error("👉 Tip: Whitelist your IP in MongoDB Atlas (Network Access -> Add IP -> Allow Access From Anywhere: 0.0.0.0/0)");
         }
+        // Retry connection in background every 10 seconds
+        setTimeout(connectDB, 10000);
     }
 };
+
+mongoose.connection.on("disconnected", () => {
+    console.warn("⚠️ MongoDB disconnected. Attempting reconnect...");
+    setTimeout(connectDB, 5000);
+});
 
 app.listen(PORT, async () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
