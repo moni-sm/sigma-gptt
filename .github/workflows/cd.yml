@@ -34,30 +34,23 @@ jobs:
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           
-          # Clean and normalize key
-          RAW_KEY=$(printf '%s\n' "$SSH_KEY" | tr -d '\r' | sed 's/\\n/\n/g')
-          
-          if echo "$RAW_KEY" | grep -q "OPENSSH PRIVATE KEY"; then
-            HEADER="-----BEGIN OPENSSH PRIVATE KEY-----"
-            FOOTER="-----END OPENSSH PRIVATE KEY-----"
-            BODY=$(echo "$RAW_KEY" | sed 's/-----BEGIN OPENSSH PRIVATE KEY-----//g' | sed 's/-----END OPENSSH PRIVATE KEY-----//g' | tr -s ' ' '\n' | grep -v '^[[:space:]]*$')
-            printf "%s\n%s\n%s\n" "$HEADER" "$BODY" "$FOOTER" > ~/.ssh/ec2_key
-          elif echo "$RAW_KEY" | grep -q "RSA PRIVATE KEY"; then
-            HEADER="-----BEGIN RSA PRIVATE KEY-----"
-            FOOTER="-----END RSA PRIVATE KEY-----"
-            BODY=$(echo "$RAW_KEY" | sed 's/-----BEGIN RSA PRIVATE KEY-----//g' | sed 's/-----END RSA PRIVATE KEY-----//g' | tr -s ' ' '\n' | grep -v '^[[:space:]]*$')
-            printf "%s\n%s\n%s\n" "$HEADER" "$BODY" "$FOOTER" > ~/.ssh/ec2_key
-          else
-            printf "%s\n" "$RAW_KEY" > ~/.ssh/ec2_key
-          fi
-
+          # Write SSH key directly and ensure standard LF newlines
+          printf "%s\n" "$SSH_KEY" | tr -d '\r' > ~/.ssh/ec2_key
           chmod 600 ~/.ssh/ec2_key
           
+          # If key contains literal \n characters, decode them
+          if ! ssh-keygen -y -f ~/.ssh/ec2_key > /dev/null 2>&1; then
+            printf "%b\n" "$SSH_KEY" | tr -d '\r' > ~/.ssh/ec2_key
+            chmod 600 ~/.ssh/ec2_key
+          fi
+
           echo "🔑 Verifying SSH key structure..."
-          ssh-keygen -l -f ~/.ssh/ec2_key || {
-            echo "❌ Invalid SSH key format detected. Please verify EC2_SSH_KEY secret."
+          if ! ssh-keygen -y -f ~/.ssh/ec2_key > /dev/null 2>&1; then
+            echo "❌ Error: OpenSSH could not parse the EC2_SSH_KEY private key."
+            echo "👉 Please ensure you copied the FULL text of sigma-gpt.pem including BEGIN and END lines."
             exit 1
-          }
+          fi
+          echo "✅ SSH Key verified successfully."
 
           # Scan host key to prevent MITM prompt
           ssh-keyscan -p "$PORT" -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
